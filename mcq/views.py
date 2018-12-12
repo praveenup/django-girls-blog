@@ -11,7 +11,11 @@ def index(request):
 
 def detail(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
-    return render(request, 'mcq/detail.html', {'question': question})
+    c = Question.objects.count()
+    count = range(1,c+1)
+    p = question_id-1
+    q = question_id+1
+    return render(request, 'mcq/detail.html', {'question': question,'count':count,'c':c,'p':p,'q':q})
 
 def results(request, question_id):
     question = get_object_or_404(Question, pk=question_id)

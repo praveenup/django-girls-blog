@@ -10,3 +10,12 @@
 {% endfor %}
 <input type="submit" value="Lock">
 </form>
+{% for i in count %}
+    <a href="{% url 'mcq:detail' i %}">{{i}}</a>
+{% endfor %}
+{% if question.id > 1  %}
+    <a href="{% url 'mcq:detail' p %}">previous</a>
+{% endif %}
+{% if question.id < c  %}
+    <a href="{% url 'mcq:detail' q %}">next</a>
+{% endif %}
