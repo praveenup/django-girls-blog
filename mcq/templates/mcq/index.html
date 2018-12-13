@@ -1,10 +1,20 @@
 {% load crispy_forms_tags %}
 {% if latest_question_list %}
-    <ul>
+    <ol >
     {% for question in latest_question_list %}
-        <li><a href="{% url 'mcq:detail' question.id %}">{{ question.question_text }}</a></li>    
+        <li><a href="{% url 'mcq:detail' question.id %}">{{ question.question_text }}</a></li>
     {% endfor %}
-    </ul>
+    </ol>
+    <ol >
+        {% for ans in answered %}
+                {% if ans %}
+                    <li>answered</li>    
+                {% else %}
+                    <li>not answered</li>    
+                {% endif %}
+        {% endfor %}
+    </ol>
+    
 {% else %}
     <p>No polls are available.</p>
 {% endif %}

@@ -6,7 +6,27 @@ from .models import Question, Choice, Answers
 
 def index(request):
     latest_question_list = Question.objects.all()
-    context = {'latest_question_list': latest_question_list}
+    answered =[]
+    for ques in latest_question_list:
+        choices = ques.choice_set.all()
+        f=False
+        for c in choices:
+            ans = Answers.objects.filter(choice=c, user=request.user).count()
+            if ans==1:
+                f=True
+                break
+        if f==True:
+            answered.append(True)
+            print("true",ques.id)
+        else:
+            answered.append(False)
+            print("false",ques.id)
+            
+        
+    context = {
+        'latest_question_list': latest_question_list,
+        'answered' : answered
+    }
     return render(request, 'mcq/index.html', context)
 
 def detail(request, question_id):
@@ -19,18 +39,6 @@ def detail(request, question_id):
 
 def results(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
-    # ques= ques.first()
-    # ques = ques.question_text
-    # ans = ques.answer_text
-    # choices = ans.choice_set.all()
-
-
-    # ans.choice
-    # if  ans == question.answer_text:
-    #     print(ans)
-    # else:
-    #     print(ans.choice)
-
     return render(request, 'mcq/result.html', {'question': question})
 
 def mark(request, question_id):
@@ -38,7 +46,6 @@ def mark(request, question_id):
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
     except (KeyError, Choice.DoesNotExist):
-        # Redisplay the question voting form.
         return render(request, 'mcq/detail.html', {
             'question': question,
             'error_message': "You didn't select a choice.",
@@ -68,9 +75,6 @@ def mark(request, question_id):
         else:
             ans = Answers(user=request.user, choice = selected_choice, correct=temp)
             ans.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
         return HttpResponseRedirect(reverse('mcq:detail', args=(question.id,)))
 
 def submission(request):
