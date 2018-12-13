@@ -71,7 +71,7 @@ def mark(request, question_id):
         # Always return an HttpResponseRedirect after successfully dealing
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
-        return HttpResponseRedirect(reverse('mcq:results', args=(question.id,)))
+        return HttpResponseRedirect(reverse('mcq:detail', args=(question.id,)))
 
 def submission(request):
     ans = Answers.objects.filter(user=request.user)
