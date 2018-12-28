@@ -2,8 +2,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from .models import Question, Choice, Answers
+from django.contrib.auth.decorators import login_required
 
-
+@login_required
 def index(request):
     latest_question_list = Question.objects.all()
     answered =[]
@@ -29,18 +30,30 @@ def index(request):
     }
     return render(request, 'mcq/index.html', context)
 
+@login_required
 def detail(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     c = Question.objects.count()
     count = range(1,c+1)
     p = question_id-1
     q = question_id+1
-    return render(request, 'mcq/detail.html', {'question': question,'count':count,'c':c,'p':p,'q':q})
+    #checking already answered or not
+    choices = question.choice_set.all()
+    ans_not=False
+    for choice in choices:
+        ans = Answers.objects.filter(choice=choice, user=request.user).count()
+        if ans==1:
+            ans_not=choice.id
+            break
+    print(ans_not)
+    return render(request, 'mcq/detail.html', {'question': question,'count':count,'c':c,'p':p,'q':q,'ans_not':ans_not})
 
+@login_required
 def results(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     return render(request, 'mcq/result.html', {'question': question})
 
+@login_required
 def mark(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     try:

@@ -1,20 +1,28 @@
+{% extends "blog/base.html" %}
 {% load crispy_forms_tags %}
+{% block content %}
 {% if latest_question_list %}
-    <ol >
-    {% for question in latest_question_list %}
-        <li><a href="{% url 'mcq:detail' question.id %}">{{ question.question_text }}</a></li>
-    {% endfor %}
-    </ol>
-    <ol >
-        {% for ans in answered %}
-                {% if ans %}
-                    <li>answered</li>    
-                {% else %}
-                    <li>not answered</li>    
-                {% endif %}
+<div class="col-md-6">
+    <table style="display: inline-block;">
+        {% for question in latest_question_list %}
+            <tr>
+                <td><a href="{% url 'mcq:detail' question.id %}">{{ question.question_text }}</a></td>
+            </tr>
         {% endfor %}
-    </ol>
-    
+    </table>          
+    <table style="float: left;">
+    {% for ans in answered %}
+        <tr>
+        {% if ans %}
+            <td>answered</td>    
+        {% else %}
+            <td>not answered</td>    
+        {% endif %}
+        </tr>
+    {% endfor %}
+    </table>           
+</div>  
 {% else %}
     <p>No polls are available.</p>
 {% endif %}
+{% endblock %}
